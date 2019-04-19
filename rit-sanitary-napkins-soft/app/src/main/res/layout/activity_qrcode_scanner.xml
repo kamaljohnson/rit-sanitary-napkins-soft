@@ -17,7 +17,6 @@
             android:layout_marginStart="32dp" android:layout_marginRight="32dp" android:layout_marginEnd="32dp"/>
 
     <TextView
-            android:text="@string/please_focus_on_the_qr_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tv_barcode" android:layout_marginTop="8dp"

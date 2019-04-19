@@ -1,4 +1,4 @@
-package com.example.napkin
+package com.xborggames.ivending
 
 import android.Manifest
 import android.annotation.SuppressLint

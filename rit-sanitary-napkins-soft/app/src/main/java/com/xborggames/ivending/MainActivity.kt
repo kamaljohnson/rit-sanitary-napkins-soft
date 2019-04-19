@@ -1,4 +1,4 @@
-package com.example.napkin
+package com.xborggames.ivending
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -11,10 +11,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        buy_button.setOnClickListener {
-            val intent = Intent(this, QRCodeScanner::class.java)
+        start_button.setOnClickListener {
+            val intent = Intent(this, PhoneLoginActivity::class.java)
             startActivity(intent)
         }
-
     }
 }
