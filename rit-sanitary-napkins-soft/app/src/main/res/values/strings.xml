@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">Tutorial</string>
+    <string name="app_name">Napkins</string>
     <string name="button">Make Payment</string>
+    <string name="please_focus_on_the_qr_code">Please focus on the QR code</string>
 </resources>

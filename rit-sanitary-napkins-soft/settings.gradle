@@ -1,1 +1,2 @@
 include ':app'
+rootProject.name='rit-sanitary-napkins-soft'

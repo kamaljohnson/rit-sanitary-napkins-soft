@@ -1,4 +1,4 @@
-package com.example.tutorial
+package com.example.napkin
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4

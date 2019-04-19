@@ -1,20 +1,23 @@
-package com.example.tutorial
+package com.example.napkin
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.WorkSource
-import android.util.Log
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.widget.TextView
+import android.widget.Toast
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
-import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class QRCodeScanner : AppCompatActivity() {
+
 
     private lateinit var svBarcode: SurfaceView
     private lateinit var tvBarcode: TextView
@@ -24,10 +27,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_qrcode_scanner)
 
-        svBarcode = findViewById(R.id.sv_barcode)
-        tvBarcode = findViewById(R.id.tv_barcode)
+        svBarcode = findViewById<SurfaceView>(R.id.sv_barcode)
+        tvBarcode = findViewById<TextView>(R.id.tv_barcode)
 
         detector = BarcodeDetector.Builder(this).setBarcodeFormats(Barcode.QR_CODE).build()
         detector.setProcessor(object : Detector.Processor<Barcode>{
@@ -55,15 +58,32 @@ class MainActivity : AppCompatActivity() {
                 cameraSource.stop()
             }
 
-            @SuppressLint("MissingPermission")
             override fun surfaceCreated(holder: SurfaceHolder?) {
-                cameraSource.start(holder)
+                if(ContextCompat.checkSelfPermission(this@QRCodeScanner,
+                        Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
+                    cameraSource.start(holder)
+                else ActivityCompat.requestPermissions(this@QRCodeScanner,
+                    arrayOf(Manifest.permission.CAMERA), 123)
             }
 
         })
-
     }
 
+    @SuppressLint("MissingPermission")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode == 123){
+            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                cameraSource.start(svBarcode.holder)
+            else Toast.makeText(this, "Scanner won't work without permission.", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+        detector.release()
+        cameraSource.stop()
+        cameraSource.release()
+    }
 }
