@@ -34,11 +34,12 @@ class HomeActivity : AppCompatActivity() {
 
             }
 
+            @SuppressLint("SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
                 val user = dataSnapshot.getValue(User::class.java)
                 if (user != null) {
-                    wallet_balance_text.text = user.wallet.toString()
+                    wallet_balance_text.text = user.wallet.toString() + " RS"
                 }
             }
         }
