@@ -1,12 +1,15 @@
 package com.xborggames.ivending
 
+import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_login.*
 
+@Suppress("UNREACHABLE_CODE")
 class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,10 +29,13 @@ class LoginActivity : AppCompatActivity() {
             //firebase authentication to create a user with email and password
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
-                    if(!it.isSuccessful) return@addOnCompleteListener
-
+                    if(!it.isSuccessful) {
+                        Toast.makeText(this, "registration was unsuccessful", Toast.LENGTH_SHORT).show()
+                        return@addOnCompleteListener
+                    }
                     //else if successful
-                    already_have_account_textview.text = it.result!!.user.uid
+                    Toast.makeText(this, "registration was successful", Toast.LENGTH_SHORT).show()
+                    saveUserToFirebaseDatabase()
                 }
         }
 
@@ -38,4 +44,24 @@ class LoginActivity : AppCompatActivity() {
         }
 
     }
+
+    private fun saveUserToFirebaseDatabase() {
+        val uid = FirebaseAuth.getInstance().uid ?: ""
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+        val wallet = 0
+
+        val user = User(uid, username_edit_text.text.toString(), wallet)
+
+        ref.setValue(user)
+            .addOnSuccessListener {
+                Toast.makeText(this, "user data saved to the cloud", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "there was an error in saving the data to the cloud", Toast.LENGTH_SHORT).show()
+            }
+
+    }
 }
+
+class User(val uid: String, val username: String, val wallet: Int)
+
