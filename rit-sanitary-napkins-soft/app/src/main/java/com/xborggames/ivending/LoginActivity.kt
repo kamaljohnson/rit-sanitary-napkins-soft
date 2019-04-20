@@ -1,6 +1,7 @@
 package com.xborggames.ivending
 
 import android.content.Context
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -55,6 +56,8 @@ class LoginActivity : AppCompatActivity() {
         ref.setValue(user)
             .addOnSuccessListener {
                 Toast.makeText(this, "user data saved to the cloud", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
             }
             .addOnFailureListener {
                 Toast.makeText(this, "there was an error in saving the data to the cloud", Toast.LENGTH_SHORT).show()
@@ -63,5 +66,8 @@ class LoginActivity : AppCompatActivity() {
     }
 }
 
-class User(val uid: String, val username: String, val wallet: Int)
-
+class User(
+    val uid: String ?= "",
+    val username: String ?= "",
+    val wallet: Int ?= 0
+)
