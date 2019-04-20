@@ -30,6 +30,11 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        purchase_button.setOnClickListener {
+            val intent = Intent(this, QRCodeScanner::class.java)
+            startActivity(intent)
+        }
+
     }
 
     public override fun onStart() {
