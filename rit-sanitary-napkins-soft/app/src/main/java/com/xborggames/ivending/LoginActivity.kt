@@ -9,6 +9,7 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_login.*
+import java.io.FileOutputStream
 
 @Suppress("UNREACHABLE_CODE")
 class LoginActivity : AppCompatActivity() {
@@ -62,7 +63,6 @@ class LoginActivity : AppCompatActivity() {
             .addOnFailureListener {
                 Toast.makeText(this, "there was an error in saving the data to the cloud", Toast.LENGTH_SHORT).show()
             }
-
     }
 }
 
