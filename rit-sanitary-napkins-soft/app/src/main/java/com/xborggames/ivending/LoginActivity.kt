@@ -50,12 +50,19 @@ class LoginActivity : AppCompatActivity() {
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
         val wallet = 0
 
-        val user = User(uid, username_edit_text.text.toString(), wallet)
+        val user = User (
+            uid = uid,
+            username = username_edit_text.text.toString(),
+            wallet = 0,
+            mid = "",
+            pin = ""
+        )
 
         ref.setValue(user)
             .addOnSuccessListener {
                 Toast.makeText(this, "user data saved to the cloud", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, HomeActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             }
             .addOnFailureListener {
@@ -65,7 +72,9 @@ class LoginActivity : AppCompatActivity() {
 }
 
 class User(
-    val uid: String ?= "",
-    val username: String ?= "",
-    val wallet: Int ?= 0
+    val uid: String ?= "",          //the user id of the current user
+    val username: String ?= "",     //the user name of the user
+    val wallet: Int ?= 0,           //the wallet amount of the user
+    val mid: String ?= "",          //id of the machine the user is using now
+    val pin: String ?= ""           //the pin the user can use to activate the machine
 )

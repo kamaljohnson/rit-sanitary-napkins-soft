@@ -15,6 +15,8 @@ import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 class QRCodeScanner : AppCompatActivity() {
 
@@ -43,6 +45,9 @@ class QRCodeScanner : AppCompatActivity() {
                 if(barcodes!!.size()>0){
                     tvBarcode.post {
                         tvBarcode.text = barcodes.valueAt(0).displayValue
+                        val uid = FirebaseAuth.getInstance().uid
+                        val ref = FirebaseDatabase.getInstance().getReference("users/$uid/mid")
+                        ref.setValue(tvBarcode.text.toString())
                     }
                 }
             }
