@@ -13,9 +13,11 @@ class WalletTopUpActivity : AppCompatActivity() {
         setContentView(R.layout.activity_wallet_top_up)
 
         topup_booth_button.setOnClickListener {
-            Toast.makeText(this, "the button is pressed", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, UserQRCodeActivity::class.java)
             startActivity(intent)
+        }
+        online_payment_button.setOnClickListener() {
+            Toast.makeText(this, "this feature is not yet implemented", Toast.LENGTH_SHORT).show()
         }
     }
 }
