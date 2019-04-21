@@ -13,6 +13,7 @@ export const onMachineScanTrigger = functions.database
     const mid = snapshot.after.val().toString()
 
     var machine_status:number = getMachineItemCost(mid)
+    console.log(`the cost of the item from the machine ${mid} is ${machine_status} Rs`)
 })
 
 function getMachineItemCost(mid:number) {
