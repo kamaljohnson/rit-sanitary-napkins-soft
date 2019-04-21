@@ -57,8 +57,22 @@ class LoginActivity : AppCompatActivity() {
             mid = "",
             pin = ""
         )
+        val machine = Machines()
 
         ref.setValue(user)
+            .addOnSuccessListener {
+                Toast.makeText(this, "user data saved to the cloud", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, HomeActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "there was an error in saving the data to the cloud", Toast.LENGTH_SHORT).show()
+            }
+
+        val mid = machine.mid
+        val ref2 = FirebaseDatabase.getInstance().getReference("/machines/$mid")
+        ref2.setValue(machine)
             .addOnSuccessListener {
                 Toast.makeText(this, "user data saved to the cloud", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, HomeActivity::class.java)
@@ -72,9 +86,18 @@ class LoginActivity : AppCompatActivity() {
 }
 
 class User(
-    val uid: String ?= "",          //the user id of the current user
-    val username: String ?= "",     //the user name of the user
-    val wallet: Int ?= 0,           //the wallet amount of the user
-    val mid: String ?= "",          //id of the machine the user is using now
-    val pin: String ?= ""           //the pin the user can use to activate the machine
+    val uid: String ?= "",              //the user id of the current user
+    val username: String ?= "",         //the user name of the user
+    val wallet: Int ?= 0,               //the wallet amount of the user
+    val mid: String ?= "",              //id of the machine the user is using now
+    val pin: String ?= "",              //the pin the user can use to activate the machine
+    val current_item_cost: Float ?= 0f  //the cost of the item provided by the currently scanned machine
+)
+
+class Machines(
+    val mid:String ?= "tempId",
+    val pcgid:String ?= "",
+    val sales:Int ?= 0,
+    val items:Int ?= 0,
+    val cost:Float ?= 0f
 )
