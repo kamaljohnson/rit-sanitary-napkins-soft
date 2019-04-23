@@ -38,3 +38,42 @@ export const onUserMidUpdate = functions.database
         return null
     })
 })
+
+export const onUserPinUpdate = functions.database
+.ref('/users/{uid}/pin')
+.onUpdate(async (change, context) => {
+    const uid = context.params.uid
+    const pin_after = change.after
+
+    if(pin_after.val() !== -1) {
+        return null
+    }
+
+    try{
+        
+        const wallet_balance = await admin.database().ref('users/' + uid).child('wallet').once('value')
+        const current_item_cost = await admin.database().ref('users/' + uid).child('cicost').once('value')
+
+        if(current_item_cost.val() > wallet_balance.val()) {
+            console.log('the cost of the item is higer than the wallet balance')
+            return admin.database().ref('users/' + uid).ref.update({pin:-2})
+        } else {
+            console.log('the cost of the item is higer than the wallet balance')
+            await admin.database().ref('users/' + uid).ref.update({wallet:wallet_balance.val() - current_item_cost.val()})
+        }
+
+        const mid = await admin.database().ref('users/' + uid).child('mid').once('value')
+
+        const pin = await getPin(mid.val())
+        return admin.database().ref('users/' + uid).ref.update({pin:pin}) 
+
+    } catch (error) {
+        console.log("Error : " + error)
+        return null
+    }
+
+})
+
+async function getPin(mid : string) {
+    return '1234'
+}
