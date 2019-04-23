@@ -19,12 +19,18 @@ export const onUserMidUpdate = functions.database
 
     const machineRef = admin.database().ref('machines/' + mid_after.val());
     return machineRef.once('value')
-    .then(snapshot => {
+    .then(async snapshot => {
         if(snapshot.exists()) {
-            return admin.database().ref('users/' + uid).ref.update({cost:10})
+            try{
+                const item_cost = await machineRef.once('value') 
+                return admin.database().ref('users/' + uid).ref.update({cicost:item_cost.child('item_cost').val()})
+            } catch(error) {
+                console.log("Error : " + error)
+                return null
+            }
         }
         else {
-            return admin.database().ref('users/' + uid).ref.update({cost:-1})
+            return admin.database().ref('users/' + uid).ref.update({cicost:-1})
         }
     })
     .catch(error => {
