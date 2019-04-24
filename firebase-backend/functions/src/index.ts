@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import { sha256 } from 'js-sha256';
 
 admin.initializeApp()
 
@@ -39,6 +40,7 @@ export const onUserMidUpdate = functions.database
     })
 })
 
+// pin updations : -2 not enough balance, -3 pin generation error
 export const onUserPinUpdate = functions.database
 .ref('/users/{uid}/pin')
 .onUpdate(async (change, context) => {
@@ -50,23 +52,19 @@ export const onUserPinUpdate = functions.database
     }
 
     try{
-        
         const wallet_balance = await admin.database().ref('users/' + uid).child('wallet').once('value')
         const current_item_cost = await admin.database().ref('users/' + uid).child('cicost').once('value')
 
         if(current_item_cost.val() > wallet_balance.val()) {
-            console.log('the cost of the item is higer than the wallet balance')
             return admin.database().ref('users/' + uid).ref.update({pin:-2})
         } else {
-            console.log('the cost of the item is higer than the wallet balance')
             await admin.database().ref('users/' + uid).ref.update({wallet:wallet_balance.val() - current_item_cost.val()})
         }
 
         const mid = await admin.database().ref('users/' + uid).child('mid').once('value')
 
         const pin = await getPin(mid.val())
-        return admin.database().ref('users/' + uid).ref.update({pin:pin}) 
-
+        return admin.database().ref('users/' + uid).ref.update({pin:pin})
     } catch (error) {
         console.log("Error : " + error)
         return null
@@ -75,5 +73,22 @@ export const onUserPinUpdate = functions.database
 })
 
 async function getPin(mid : string) {
-    return '1234'
+    
+    try{
+        let pin_gen_code =  await admin.database().ref('machines/' + mid).child('pgcode').once('value')
+        const new_pin_gen_code = pin_gen_code.val() + 1
+        await admin.database().ref('machines/' + mid).ref.update({pgcode: new_pin_gen_code})
+        
+        //the hash of the generation code and mid of the machine
+        const hash = sha256(String(pin_gen_code.val()) + mid)
+        
+        //getting the 3digits of the hash
+        const pin = String(hash.charCodeAt(0)) + String(hash.charCodeAt(1)) + String(hash.charCodeAt(2))        
+        return pin
+
+    } catch (error) {
+        console.log("Error : " + error)
+        return '-3'
+    }
+
 }
