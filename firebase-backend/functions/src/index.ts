@@ -57,13 +57,14 @@ export const onUserPinUpdate = functions.database
 
         if(current_item_cost.val() > wallet_balance.val()) {
             return admin.database().ref('users/' + uid).ref.update({pin:-2})
-        } else {
-            await admin.database().ref('users/' + uid).ref.update({wallet:wallet_balance.val() - current_item_cost.val()})
         }
 
         const mid = await admin.database().ref('users/' + uid).child('mid').once('value')
 
         const pin = await getPin(mid.val())
+
+        await admin.database().ref('users/' + uid).ref.update({wallet:wallet_balance.val() - current_item_cost.val()})
+
         return admin.database().ref('users/' + uid).ref.update({pin:pin})
     } catch (error) {
         console.log("Error : " + error)
@@ -80,10 +81,12 @@ async function getPin(mid : string) {
         await admin.database().ref('machines/' + mid).ref.update({pgcode: new_pin_gen_code})
         
         //the hash of the generation code and mid of the machine
-        const hash = sha256(String(pin_gen_code.val()) + mid)
+        let hash = sha256(String(pin_gen_code.val()) + mid)
+        hash = hash.toUpperCase()
+        const offset = 256 % pin_gen_code.val()
         
         //getting the 3digits of the hash
-        const pin = String(hash.charCodeAt(0)) + String(hash.charCodeAt(1)) + String(hash.charCodeAt(2))        
+        let pin = String(hash.charCodeAt(offset)) + String(hash.charCodeAt(offset + 1)) + String(hash.charCodeAt(offset + 2))
         return pin
 
     } catch (error) {
