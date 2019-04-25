@@ -91,13 +91,13 @@ class User(
     val wallet: Int ?= 0,               //the wallet amount of the user
     val mid: String ?= "",              //id of the machine the user is using now
     val pin: String ?= "",              //the pin the user can use to activate the machine
-    val current_item_cost: Float ?= 0f  //the cost of the item provided by the currently scanned machine
+    val cicost: Float ?= 0f             //the cicost of the item provided by the currently scanned machine
 )
 
 class Machines(
     val mid:String ?= "tempId",
-    val pcgid:String ?= "",
+    val pgcode:String ?= "0",
     val sales:Int ?= 0,
     val items:Int ?= 0,
-    val cost:Float ?= 0f
+    val item_cost:Float ?= 10f
 )

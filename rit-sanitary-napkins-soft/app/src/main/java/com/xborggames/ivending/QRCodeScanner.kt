@@ -2,6 +2,8 @@ package com.xborggames.ivending
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Dialog
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -9,6 +11,9 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import android.view.View
+import android.view.Window
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.gms.vision.CameraSource
@@ -16,10 +21,11 @@ import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
+import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.activity_qrcode_scanner.*
 
 class QRCodeScanner : AppCompatActivity() {
-
 
     private lateinit var svBarcode: SurfaceView
     private lateinit var tvBarcode: TextView
@@ -27,8 +33,12 @@ class QRCodeScanner : AppCompatActivity() {
     private lateinit var detector: BarcodeDetector
     private lateinit var cameraSource: CameraSource
 
+    private lateinit var database: DatabaseReference
+    private lateinit var postReference: DatabaseReference
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_qrcode_scanner)
 
         svBarcode = findViewById<SurfaceView>(R.id.sv_barcode)
@@ -72,6 +82,12 @@ class QRCodeScanner : AppCompatActivity() {
             }
 
         })
+
+        get_item_details_button.setOnClickListener {
+            val intent = Intent(this, ItemDetailsPopUp::class.java)
+            startActivity(intent)
+        }
+
     }
 
     @SuppressLint("MissingPermission")

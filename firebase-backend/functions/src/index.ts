@@ -47,7 +47,7 @@ export const onUserPinUpdate = functions.database
     const uid = context.params.uid
     const pin_after = change.after
 
-    if(pin_after.val() !== -1) {
+    if(pin_after.val() !== '-1') {
         return null
     }
 
@@ -56,7 +56,7 @@ export const onUserPinUpdate = functions.database
         const current_item_cost = await admin.database().ref('users/' + uid).child('cicost').once('value')
 
         if(current_item_cost.val() > wallet_balance.val()) {
-            return admin.database().ref('users/' + uid).ref.update({pin:-2})
+            return admin.database().ref('users/' + uid).ref.update({pin:'-2'})
         }
 
         const mid = await admin.database().ref('users/' + uid).child('mid').once('value')
@@ -83,10 +83,14 @@ async function getPin(mid : string) {
         //the hash of the generation code and mid of the machine
         let hash = sha256(String(pin_gen_code.val()) + mid)
         hash = hash.toUpperCase()
-        const offset = 256 % pin_gen_code.val()
         
         //getting the 3digits of the hash
-        let pin = String(hash.charCodeAt(offset)) + String(hash.charCodeAt(offset + 1)) + String(hash.charCodeAt(offset + 2))
+        let pin = String(hash.charCodeAt(0) % 10)
+                + String(hash.charCodeAt(1)  % 10) 
+                + String(hash.charCodeAt(2) % 10) 
+                + String(hash.charCodeAt(3) % 10) 
+                + String(hash.charCodeAt(4) % 10) 
+                + String(hash.charCodeAt(5) % 10)
         return pin
 
     } catch (error) {

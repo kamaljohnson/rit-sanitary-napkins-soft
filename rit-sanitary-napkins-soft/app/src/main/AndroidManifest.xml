@@ -11,9 +11,17 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/Theme.AppCompat">
+        <activity android:name=".PinCodeViewActivity">
+        </activity>
+        <activity android:name=".ItemDetailsPopUp">
+        </activity>
+        <activity android:name=".ReceiveMoneyFromWallet">
+        </activity>
+        <activity android:name=".SendMoneyFromWallet">
+        </activity>
         <activity android:name=".SignInActivity">
         </activity>
-        <activity android:name=".UserQRCodeActivity">
+        <activity android:name=".ReceiveMoneyFromWallet">
         </activity>
         <activity android:name=".HomeActivity">
         </activity>
