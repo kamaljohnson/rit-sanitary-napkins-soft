@@ -50,17 +50,17 @@ class ItemDetailsPopUp : AppCompatActivity() {
 //            startActivity(intent)
 //        }
 //        {
-        ref.setValue("-1")
-            .addOnSuccessListener {
-                Toast.makeText(this, "sending request for pin", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, PinCodeViewActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "there was an error in saving the data to the cloud", Toast.LENGTH_SHORT)
-                    .show()
-            }
+            ref.setValue("-1")
+                .addOnSuccessListener {
+                    Toast.makeText(this, "sending request for pin", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, PinCodeViewActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "there was an error in saving the data to the cloud", Toast.LENGTH_SHORT)
+                        .show()
+                }
 //        }
     }
 

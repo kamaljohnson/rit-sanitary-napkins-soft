@@ -1,6 +1,7 @@
 package com.xborggames.ivending
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.google.firebase.auth.FirebaseAuth
@@ -41,12 +42,21 @@ class PinCodeViewActivity : AppCompatActivity() {
                         pincode_text.text = user.pin.toString()
                     }
                     else {
-                        pincode_text.text = "------"
+                        pincode_text.text = "- - - - - -"
                     }
                 }
             }
         }
         postReference.addValueEventListener(postListener)
+
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this, HomeActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+        finish()
 
     }
 }

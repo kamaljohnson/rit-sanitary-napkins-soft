@@ -14,10 +14,16 @@ class WalletTopUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wallet_top_up)
 
-        send_money_from_wallet.setOnClickListener {
+        receive_money_from_wallet.setOnClickListener {
             val intent = Intent(this, ReceiveMoneyFromWallet::class.java)
             startActivity(intent)
         }
+
+        send_money_from_wallet.setOnClickListener {
+            val intent = Intent(this, SendMoneyFromWallet::class.java)
+            startActivity(intent)
+        }
+
         online_payment_button.setOnClickListener() {
             Toast.makeText(this, "this feature is not yet implemented", Toast.LENGTH_SHORT).show()
 
