@@ -22,8 +22,7 @@ class HomeActivity : AppCompatActivity() {
 
         val uid = FirebaseAuth.getInstance().uid ?: ""
 
-        postReference = FirebaseDatabase.getInstance().reference
-            .child("users").child(uid)
+        postReference = FirebaseDatabase.getInstance().reference.child("users").child(uid)
 
         topup_button.setOnClickListener {
             val intent = Intent(this, WalletTopUpActivity::class.java)

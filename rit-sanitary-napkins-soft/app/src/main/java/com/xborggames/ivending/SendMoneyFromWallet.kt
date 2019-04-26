@@ -61,7 +61,8 @@ class SendMoneyFromWallet : AppCompatActivity() {
                             from=uid,
                             to=tvBarcode.text.toString()
                         )
-                        transaction_id = ref.push().setValue(transaction).toString()
+                        transaction_id = ref.push().key.toString()
+                        ref.child(transaction_id).setValue(transaction)
                         prevBarcode = tvBarcode.text.toString()
                         send_button.visibility = View.VISIBLE
                     }
@@ -90,9 +91,13 @@ class SendMoneyFromWallet : AppCompatActivity() {
         })
 
         send_button.setOnClickListener {
-            val intent = Intent(this, SendMoneyFromWalletPt2::class.java)
-            intent.putExtra("transactoin_id", transaction_id)
-            startActivity(intent)
+            if(transaction_id != "") {
+                val intent = Intent(this, SendMoneyFromWalletPt2::class.java)
+                intent.putExtra("transaction_id", transaction_id)
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "user validation...", Toast.LENGTH_SHORT).show()
+            }
         }
 
     }
@@ -103,14 +108,13 @@ class SendMoneyFromWallet : AppCompatActivity() {
         if(requestCode == 123){
             if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 cameraSource.start(svBarcode.holder)
-            else Toast.makeText(this, "Scanner won't work without permission.", Toast.LENGTH_SHORT)
-                .show()
+            else Toast.makeText(this, "Scanner won't work without permission.", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onStart() {
         super.onStart()
-        send_button.isEnabled = false
+
     }
 
     class Transactions (
