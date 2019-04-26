@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".LoginActivity" android:background="@color/sub_background">
+        tools:context=".LoginActivity" android:background="@color/main_background">
     <EditText
             android:paddingLeft="16dp"
             android:layout_width="0dp"
@@ -14,14 +14,14 @@
             android:text=""
             android:ems="10"
             android:id="@+id/signin_email_edit_text"
-            app:layout_constraintStart_toStartOf="@+id/username_edit_text"
-            app:layout_constraintEnd_toEndOf="@+id/username_edit_text"
+            app:layout_constraintStart_toStartOf="@+id/amount_text"
+            app:layout_constraintEnd_toEndOf="@+id/amount_text"
             android:background="@drawable/rounded_edittext_register"
             android:hint="Email"
-            android:textColor="@color/cardview_shadow_start_color"
+            android:textColor="@color/text_color_negative"
             android:textColorHint="@color/main_background"
             android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/username_edit_text"/>
+            app:layout_constraintTop_toBottomOf="@+id/amount_text"/>
     <EditText
             android:paddingLeft="16dp"
             android:layout_width="0dp"
@@ -35,7 +35,7 @@
             app:layout_constraintEnd_toEndOf="@+id/signin_email_edit_text"
             app:layout_constraintStart_toStartOf="@+id/signin_email_edit_text"
             android:background="@drawable/rounded_edittext_register"
-            android:textColor="@color/cardview_shadow_start_color"
+            android:textColor="@color/text_color_negative"
             android:hint="@string/password"
     />
     <EditText
@@ -46,13 +46,13 @@
             android:textColorHint="@color/main_background"
             android:text=""
             android:ems="10"
-            android:id="@+id/username_edit_text" android:layout_marginTop="200dp"
+            android:id="@+id/amount_text" android:layout_marginTop="200dp"
             app:layout_constraintTop_toTopOf="parent" android:layout_marginEnd="32dp"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginRight="32dp"
             android:layout_marginStart="32dp"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginLeft="32dp"
             android:background="@drawable/rounded_edittext_register"
-            android:textColor="@color/cardview_shadow_start_color"
+            android:textColor="@color/text_color_negative"
             android:hint="Username"
     />
     <Button
@@ -69,6 +69,7 @@
     />
     <TextView
             android:textAlignment="center"
+            android:textColor="@color/text_color"
             android:text="Already have an account?"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

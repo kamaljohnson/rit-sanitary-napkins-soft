@@ -23,6 +23,7 @@ import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.activity_item_details_pop_up.*
 import kotlinx.android.synthetic.main.activity_qrcode_scanner.*
 
 class QRCodeScanner : AppCompatActivity() {
@@ -32,6 +33,8 @@ class QRCodeScanner : AppCompatActivity() {
 
     private lateinit var detector: BarcodeDetector
     private lateinit var cameraSource: CameraSource
+
+    private var prevBarcode: String = ""
 
     private lateinit var database: DatabaseReference
     private lateinit var postReference: DatabaseReference
@@ -52,12 +55,14 @@ class QRCodeScanner : AppCompatActivity() {
 
             override fun receiveDetections(detections: Detector.Detections<Barcode>?) {
                 var barcodes = detections?.detectedItems
-                if(barcodes!!.size()>0){
+                if(barcodes!!.size()>0 && prevBarcode != barcodes.valueAt(0).displayValue){
                     tvBarcode.post {
                         tvBarcode.text = barcodes.valueAt(0).displayValue
                         val uid = FirebaseAuth.getInstance().uid
                         val ref = FirebaseDatabase.getInstance().getReference("users/$uid/mid")
                         ref.setValue(tvBarcode.text.toString())
+                        prevBarcode = tvBarcode.text.toString()
+                        get_item_details_button.visibility = View.VISIBLE
                     }
                 }
             }

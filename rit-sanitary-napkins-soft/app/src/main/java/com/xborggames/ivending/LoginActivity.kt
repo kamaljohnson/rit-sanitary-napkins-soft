@@ -16,7 +16,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         sign_in.setOnClickListener {
-            val username = username_edit_text.text.toString()
+            val username = amount_text.text.toString()
             val email = signin_email_edit_text.text.toString()
             val password = signin_password_edit_text.text.toString()
 
@@ -52,7 +52,7 @@ class LoginActivity : AppCompatActivity() {
 
         val user = User (
             uid = uid,
-            username = username_edit_text.text.toString(),
+            username = amount_text.text.toString(),
             wallet = 0,
             mid = "",
             pin = ""

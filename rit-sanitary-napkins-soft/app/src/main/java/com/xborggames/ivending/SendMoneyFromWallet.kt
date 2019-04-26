@@ -4,12 +4,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.opengl.Visibility
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.gms.vision.CameraSource
@@ -20,14 +22,19 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_qrcode_scanner.*
+import kotlinx.android.synthetic.main.activity_send_money_from_wallet.*
 
 class SendMoneyFromWallet : AppCompatActivity() {
 
     private lateinit var svBarcode: SurfaceView
     private lateinit var tvBarcode: TextView
 
+    private var prevBarcode: String = ""
+
     private lateinit var detector: BarcodeDetector
     private lateinit var cameraSource: CameraSource
+
+    var transaction_id = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,12 +52,18 @@ class SendMoneyFromWallet : AppCompatActivity() {
 
             override fun receiveDetections(detections: Detector.Detections<Barcode>?) {
                 var barcodes = detections?.detectedItems
-                if(barcodes!!.size()>0){
+                if(barcodes!!.size()>0 && prevBarcode != barcodes.valueAt(0).displayValue){
                     tvBarcode.post {
                         tvBarcode.text = barcodes.valueAt(0).displayValue
                         val uid = FirebaseAuth.getInstance().uid
-                        val ref = FirebaseDatabase.getInstance().getReference("users/$uid/mid")
-                        ref.setValue(tvBarcode.text.toString())
+                        val ref = FirebaseDatabase.getInstance().getReference("transactions/")
+                        val transaction = Transactions(
+                            from=uid,
+                            to=tvBarcode.text.toString()
+                        )
+                        transaction_id = ref.push().setValue(transaction).toString()
+                        prevBarcode = tvBarcode.text.toString()
+                        send_button.visibility = View.VISIBLE
                     }
                 }
             }
@@ -76,6 +89,12 @@ class SendMoneyFromWallet : AppCompatActivity() {
 
         })
 
+        send_button.setOnClickListener {
+            val intent = Intent(this, SendMoneyFromWalletPt2::class.java)
+            intent.putExtra("transactoin_id", transaction_id)
+            startActivity(intent)
+        }
+
     }
 
     @SuppressLint("MissingPermission")
@@ -88,6 +107,18 @@ class SendMoneyFromWallet : AppCompatActivity() {
                 .show()
         }
     }
+
+    override fun onStart() {
+        super.onStart()
+        send_button.isEnabled = false
+    }
+
+    class Transactions (
+        val from:String ?= "",
+        val to:String ?= "",
+        val amount:Float ?= 0f,
+        val status:String ?= ""
+    )
 
     override fun onDestroy() {
         super.onDestroy()

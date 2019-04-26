@@ -21,15 +21,18 @@
             android:background="@drawable/rounded_button"/>
     <TextView
             android:text="0Rs"
+            android:textColor="@color/text_color"
             android:layout_width="0dp"
             android:layout_height="70dp"
-            android:id="@+id/item_cost_text" android:layout_marginBottom="100dp"
+            android:id="@+id/item_cost_text"
+            android:layout_marginBottom="100dp"
             app:layout_constraintBottom_toTopOf="@+id/buy_button" app:layout_constraintEnd_toEndOf="@+id/buy_button"
             app:layout_constraintStart_toStartOf="@+id/buy_button"
             android:textAlignment="center"
             android:textSize="50dp"/>
     <TextView
             android:text="wallet balane"
+            android:textColor="@color/text_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView2" app:layout_constraintStart_toStartOf="parent" android:layout_marginLeft="8dp"
@@ -41,6 +44,7 @@
     <TextView
             android:text="100Rs"
             android:layout_width="wrap_content"
+            android:textColor="@color/text_color"
             android:layout_height="wrap_content"
             android:id="@+id/wallet_balance_text"
             app:layout_constraintStart_toEndOf="@+id/textView2"

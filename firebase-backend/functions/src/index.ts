@@ -73,10 +73,40 @@ export const onUserPinUpdate = functions.database
 
 })
 
+export const onTransactionCreate = functions.database
+.ref('/transactions/{pushId}')
+.onCreate(async (snapshot, context) => {
+    const transaction_id = context.params.pushId
+    const to = snapshot.child('to')
+    const from = snapshot.child('from')
+
+    //checking if the to uid is a valid user id
+    const to_user_ref = admin.database().ref('users/' + to.val());
+    return to_user_ref.once('value')
+    .then(async snap => {
+        if(snap.exists() && (to.val() != from.val())) {
+            try{
+                return admin.database().ref('transactions/' + transaction_id).ref.update({status:"valid"})
+            } catch(error) {
+                console.log("Error : " + error)
+                return null
+            }
+        }
+        else {
+            return admin.database().ref('transactions/' + transaction_id).ref.update({status:"invalid"})
+        }
+    })
+    .catch(error => {
+        console.log("Error : " + error)
+        return null
+    })
+
+})
+
 async function getPin(mid : string) {
     
     try{
-        let pin_gen_code =  await admin.database().ref('machines/' + mid).child('pgcode').once('value')
+        const pin_gen_code =  await admin.database().ref('machines/' + mid).child('pgcode').once('value')
         const new_pin_gen_code = pin_gen_code.val() + 1
         await admin.database().ref('machines/' + mid).ref.update({pgcode: new_pin_gen_code})
         
@@ -85,12 +115,12 @@ async function getPin(mid : string) {
         hash = hash.toUpperCase()
         
         //getting the 3digits of the hash
-        let pin = String(hash.charCodeAt(0) % 10) + " "
-                + String(hash.charCodeAt(1)  % 10) + " "
-                + String(hash.charCodeAt(2) % 10) + " "
-                + String(hash.charCodeAt(3) % 10) + " "
-                + String(hash.charCodeAt(4) % 10) + " "
-                + String(hash.charCodeAt(5) % 10)
+        let pin = " "
+        for (let i = 0; i<5; i++) {
+            pin +=  String(hash.charCodeAt(i) % 10) + " "
+        }
+        pin += String(hash.charCodeAt(5)%10)
+
         return pin
 
     } catch (error) {

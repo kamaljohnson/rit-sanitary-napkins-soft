@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="text_color">#FFFFFF</color>
-    <color name="main_background">#462191</color>
-    <color name="sub_background">#7C5EB1</color>
-    <color name="main_button_color">#3F51B5</color>
+    <color name="text_color_negative">#424242</color>
+    <color name="main_background">#009688</color>
+    <color name="sub_background">#8BC34A</color>
+    <color name="main_button_color">#CDDC39</color>
 </resources>
 
 
