@@ -85,11 +85,11 @@ async function getPin(mid : string) {
         hash = hash.toUpperCase()
         
         //getting the 3digits of the hash
-        let pin = String(hash.charCodeAt(0) % 10)
-                + String(hash.charCodeAt(1)  % 10) 
-                + String(hash.charCodeAt(2) % 10) 
-                + String(hash.charCodeAt(3) % 10) 
-                + String(hash.charCodeAt(4) % 10) 
+        let pin = String(hash.charCodeAt(0) % 10) + " "
+                + String(hash.charCodeAt(1)  % 10) + " "
+                + String(hash.charCodeAt(2) % 10) + " "
+                + String(hash.charCodeAt(3) % 10) + " "
+                + String(hash.charCodeAt(4) % 10) + " "
                 + String(hash.charCodeAt(5) % 10)
         return pin
 

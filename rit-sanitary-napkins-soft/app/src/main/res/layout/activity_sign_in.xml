@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".SignInActivity" android:background="@color/colorAccent">
+        tools:context=".SignInActivity" android:background="@color/sub_background">
     <EditText
             android:paddingLeft="16dp"
             android:layout_width="0dp"
@@ -18,7 +18,7 @@
             android:hint="Email"
             android:textColor="@color/cardview_shadow_start_color"
             android:layout_marginEnd="32dp"
-            android:textColorHint="@color/colorPrimaryDark"
+            android:textColorHint="@color/main_background"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginRight="32dp"
             android:layout_marginStart="32dp"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginLeft="32dp"
@@ -32,7 +32,7 @@
             android:text=""
             android:ems="10"
             android:id="@+id/signin_password_edit_text" android:layout_marginTop="8dp"
-            android:textColorHint="@color/colorPrimaryDark"
+            android:textColorHint="@color/main_background"
             app:layout_constraintTop_toBottomOf="@+id/signin_email_edit_text"
             app:layout_constraintEnd_toEndOf="@+id/signin_email_edit_text"
             app:layout_constraintStart_toStartOf="@+id/signin_email_edit_text"
@@ -50,7 +50,7 @@
             app:layout_constraintStart_toStartOf="@+id/signin_password_edit_text" android:layout_marginRight="16dp"
             android:layout_marginEnd="16dp" android:layout_marginLeft="16dp" android:layout_marginStart="16dp"
             android:background="@drawable/rounded_button"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/text_color"
     />
     <TextView
             android:textAlignment="center"
