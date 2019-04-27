@@ -93,6 +93,7 @@ class SendMoneyFromWallet : AppCompatActivity() {
         send_button.setOnClickListener {
             if(transaction_id != "") {
                 val intent = Intent(this, SendMoneyFromWalletPt2::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 intent.putExtra("transaction_id", transaction_id)
                 startActivity(intent)
             } else {

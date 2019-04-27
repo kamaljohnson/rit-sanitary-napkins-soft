@@ -11,31 +11,39 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/Theme.AppCompat">
-        <activity android:name=".SendMoneyFromWalletPt2">
-        </activity>
-        <activity android:name=".PinCodeViewActivity">
-        </activity>
-        <activity android:name=".ItemDetailsPopUp">
-        </activity>
-        <activity android:name=".ReceiveMoneyFromWallet">
-        </activity>
-        <activity android:name=".SendMoneyFromWallet">
-        </activity>
-        <activity android:name=".SignInActivity">
-        </activity>
-        <activity android:name=".HomeActivity">
-        </activity>
-        <activity android:name=".WalletTopUpActivity">
-        </activity>
-        <activity android:name=".LoginActivity">
-        </activity>
         <activity
-                android:name=".ui.login.LoginActivity"
-                android:label="@string/title_activity_login">
+                android:name=".SendMoneyFromWalletPt2"
+                android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".QRCodeScanner">
+        <activity android:name=".PinCodeViewActivity"
+                  android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".ItemDetailsPopUp"
+                  android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".ReceiveMoneyFromWallet"
+                  android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".SendMoneyFromWallet"
+                  android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".SignInActivity"
+                  android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".HomeActivity"
+                  android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".WalletTopUpActivity"
+                  android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".LoginActivity"
+                  android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".QRCodeScanner"
+                  android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".MainActivity"
+                  android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

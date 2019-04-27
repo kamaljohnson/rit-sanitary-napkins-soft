@@ -4,9 +4,6 @@ import { sha256 } from 'js-sha256';
 
 admin.initializeApp()
 
-// Start writing Firebase Functions
-// https://firebase.google.com/docs/functions/typescript
-
 export const onUserMidUpdate = functions.database
 .ref('/users/{uid}/mid')
 .onUpdate((change, context) => {
@@ -64,7 +61,9 @@ export const onUserPinUpdate = functions.database
         const pin = await getPin(mid.val())
 
         await admin.database().ref('users/' + uid).ref.update({wallet:wallet_balance.val() - current_item_cost.val()})
-
+        await admin.database().ref('users/' + uid).ref.update({mid:""})
+        await admin.database().ref('users/' + uid).ref.update({cicost:-1})
+        
         return admin.database().ref('users/' + uid).ref.update({pin:pin})
     } catch (error) {
         console.log("Error : " + error)
@@ -110,7 +109,7 @@ export const onTransactionUpdate = functions.database
     const to = change.after.child('to').val()
     const from = change.after.child('from').val()
 
-    if(change.after.child('amount').val() == change.before.child('amount').val()) {
+    if(change.after.child('amount').val() == change.before.child('amount').val() || change.after.child('amount').val() == 0) {
         return null
     }
 
@@ -121,12 +120,17 @@ export const onTransactionUpdate = functions.database
         const promises = []
         const to_user_wallet_balance = await admin.database().ref('users/' + to).child('wallet').once('value')
         const from_user_wallet_balance = await admin.database().ref('users/' + from).child('wallet').once('value')
-    
+        
+        const status = admin.database().ref('transactions/' + context.params.pushId)
+
+        if((from_user_wallet_balance.val() - amount) < 0) {
+            return status.update({status:"insufficient funds"})    
+        }
+
         promises.push(to_user_ref.update({wallet:(to_user_wallet_balance.val() + amount)}))
     
         promises.push(from_user_ref.update({wallet:(from_user_wallet_balance.val() - amount)}))
 
-        const status = admin.database().ref('transactions/' + context.params.pushId)
         promises.push(status.update({status:"Successful"}))
         return Promise.all(promises)
     } catch(error) {
@@ -142,15 +146,17 @@ async function getPin(mid : string) {
     
     try{
         const pin_gen_code =  await admin.database().ref('machines/' + mid).child('pgcode').once('value')
+        const prev_sales =  await admin.database().ref('machines/' + mid).child('sales').once('value')
         const new_pin_gen_code = pin_gen_code.val() + 1
         await admin.database().ref('machines/' + mid).ref.update({pgcode: new_pin_gen_code})
+        await admin.database().ref('machines/' + mid).ref.update({sales: prev_sales.val() + 1})
         
         //the hash of the generation code and mid of the machine
         let hash = sha256(String(pin_gen_code.val()) + mid)
         hash = hash.toUpperCase()
         
         //getting the 3digits of the hash
-        let pin = " "
+        let pin = ""
         for (let i = 0; i<5; i++) {
             pin +=  String(hash.charCodeAt(i) % 10) + " "
         }

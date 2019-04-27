@@ -31,7 +31,7 @@
             android:textAlignment="center"
             android:textSize="50dp"/>
     <TextView
-            android:text="wallet balane"
+            android:text="wallet balance"
             android:textColor="@color/text_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
