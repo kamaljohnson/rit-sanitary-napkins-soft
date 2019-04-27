@@ -45,6 +45,7 @@ class SendMoneyFromWalletPt2 : AppCompatActivity() {
             val uid = FirebaseAuth.getInstance().uid
             val ref = FirebaseDatabase.getInstance().getReference("transactions/$transaction_id")
             ref.child("amount").setValue(amount_text.text.toString().toFloat())
+            send_button.visibility = View.INVISIBLE
         }
     }
 

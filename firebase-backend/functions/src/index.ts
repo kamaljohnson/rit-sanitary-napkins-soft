@@ -84,7 +84,7 @@ export const onTransactionCreate = functions.database
     const to_user_ref = admin.database().ref('users/' + to.val());
     return to_user_ref.once('value')
     .then(async snap => {
-        if(snap.exists() && (to.val() != from.val())) {
+        if(snap.exists() && (to.val() !== from.val())) {
             try{
                 return admin.database().ref('transactions/' + transaction_id).ref.update({status:"valid"})
             } catch(error) {
@@ -102,6 +102,41 @@ export const onTransactionCreate = functions.database
     })
 
 })
+
+export const onTransactionUpdate = functions.database
+.ref('/transactions/{pushId}')
+.onUpdate(async (change, context) => {
+    const amount = change.after.child('amount').val()
+    const to = change.after.child('to').val()
+    const from = change.after.child('from').val()
+
+    if(change.after.child('amount').val() == change.before.child('amount').val()) {
+        return null
+    }
+
+    const to_user_ref = admin.database().ref('users/' + to);
+    const from_user_ref  = admin.database().ref('users/' + from);
+
+    try{
+        const promises = []
+        const to_user_wallet_balance = await admin.database().ref('users/' + to).child('wallet').once('value')
+        const from_user_wallet_balance = await admin.database().ref('users/' + from).child('wallet').once('value')
+    
+        promises.push(to_user_ref.update({wallet:(to_user_wallet_balance.val() + amount)}))
+    
+        promises.push(from_user_ref.update({wallet:(from_user_wallet_balance.val() - amount)}))
+
+        const status = admin.database().ref('transactions/' + context.params.pushId)
+        promises.push(status.update({status:"Successful"}))
+        return Promise.all(promises)
+    } catch(error) {
+        const status = await admin.database().ref('transactions/' + context.params.pushId)
+        await status.update({status:"Error"})
+        return("Error : " + error)
+    }
+
+})
+
 
 async function getPin(mid : string) {
     
