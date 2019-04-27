@@ -63,11 +63,7 @@ class SendMoneyFromWalletPt2 : AppCompatActivity() {
                 // Get Post object and use the values to update the UI
                 val transaction = dataSnapshot.getValue(SendMoneyFromWallet.Transactions::class.java)
                 if (transaction != null) {
-                    if(transaction.status == "invalid") {
-                        transaction_status.text = "INVALID"
-                    }else {
-                        transaction_status.text = "VALID"
-                    }
+                    transaction_status.text = transaction.status
                 }
             }
         }
