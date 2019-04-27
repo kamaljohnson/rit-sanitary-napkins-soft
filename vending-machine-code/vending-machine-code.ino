@@ -2,7 +2,8 @@ char hex[256];
 uint8_t data[256];
 int start = 0;
 int seconds = 0;
-uint8_t hash[32] = {'9', '8', '4', '0', '1', '2'};
+uint8_t hash[32];
+String pin;
 #define SHA256_BLOCK_SIZE 32
 
 typedef struct {
@@ -156,18 +157,30 @@ char *btoh(char *dest, uint8_t *src, int len) {
   return dest;
 }
 
-void setup()
+String SHA256(String data) 
 {
-  Serial.begin(9600);
+  uint8_t data_buffer[data.length()];
+  
+  for(int i=0; i<data.length(); i++)
+  {
+    data_buffer[i] = (uint8_t)data.charAt(i);
+  }
+  
   SHA256_CTX ctx;
   ctx.datalen = 0;
   ctx.bitlen = 512;
   
   sha256_init(&ctx);
-  sha256_update(&ctx, hash, 6);
+  sha256_update(&ctx, data_buffer, data.length());
   sha256_final(&ctx, hash);
-  Serial.println(btoh(hex, hash, 32)); 
+  Serial.println(btoh(hex, hash, 32));   
+}
 
+void setup()
+{
+  Serial.begin(9600);
+  String pin = "hello world";
+  String sha = SHA256(pin);
 }
 
 void loop()
