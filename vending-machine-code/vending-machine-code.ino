@@ -176,13 +176,14 @@ String SHA256(String data)
   return(btoh(hex, hash, 32));
 }
 
+
 void setup()
 {
   Serial.begin(9600);
-  
-  String pin = "949059";
+
+  String pin = "797695";
   String mid = "tempId";
-  int pgcode = 0;
+  int pgcode = 1;
   int limit = 10;
   String sha;
   bool success = false; 
