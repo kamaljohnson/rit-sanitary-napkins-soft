@@ -173,17 +173,48 @@ String SHA256(String data)
   sha256_init(&ctx);
   sha256_update(&ctx, data_buffer, data.length());
   sha256_final(&ctx, hash);
-  Serial.println(btoh(hex, hash, 32));   
+  return(btoh(hex, hash, 32));
 }
 
 void setup()
 {
   Serial.begin(9600);
-  String pin = "hello world";
-  String sha = SHA256(pin);
+  
+  String pin = "949059";
+  String mid = "tempId";
+  int pgcode = 0;
+  int limit = 10;
+  String sha;
+  bool success = false; 
+  for(int i = pgcode; i<pgcode +limit; i++)
+  {
+    sha = SHA256(String(i) + mid);
+    String s_pin = sha.substring(0, 6);
+    s_pin.toUpperCase();
+    String i_pin = "";
+    for(int j = 0; j <= 5; j++)
+    {
+      int ascii = s_pin.charAt(j);
+      i_pin += (String)(ascii % 10);
+    }
+    if(i_pin.equals(pin))
+    {
+      success = true;
+      break;
+    }
+  }
+  if(success == false)
+  {
+    Serial.println("Pin Rejected");
+  }
+  else 
+  {
+    Serial.println("Pin Accepted");
+  }
+  
 }
 
 void loop()
 {
-  
+
 }
