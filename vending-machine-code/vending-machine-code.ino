@@ -4,6 +4,8 @@
 //------PGCODE|MID--------
 #define PGCODE_ADDRESS 0
 #define MID_ADDRESS 50
+#define PINSTACK_ADDRESS 500
+
 int pgcode;
 String mid;
 //------------------------
@@ -231,10 +233,14 @@ int checkPin(String mid, int pgcode, String pin, int limit)
     pgc_skipped++;
   }
   
-  
   if(success == false)
   {
-    pgc_skipped = 0;   
+    success = checkIfPinPresentInStack(pin);
+    if(success)
+    {
+      return(limit+1);
+    }
+    pgc_skipped = 0;
     return(-1);
   }
   else 
@@ -286,12 +292,61 @@ String getStringFromAddress(int address, char end_char= '*')
   }
 }
 
+void errazeStringArrayFromAddress(int starting_address, char end_char = '/')
+{
+  
+}
+
+bool checkIfPinPresentInStack(String pin)
+{
+  char sub_end_char = '*';
+  char end_char = '/';
+  String string = getStringFromAddress(PINSTACK_ADDRESS, end_char);
+  string+= end_char;
+  Serial.println(string);
+  
+  int j = 0;
+  bool end_flag = false;
+  while(true)
+  {
+    String sub_string = "";
+    while(true)
+    {
+      char ch = string.charAt(j);
+      j++;
+      if(ch == sub_end_char)
+      {
+        break;
+      }
+      if(ch == end_char)
+      {
+        end_flag = true;
+        break;
+      }
+      sub_string += String(ch);
+    }
+    Serial.println(sub_string);
+    if(pin.equals(sub_string))
+    {
+      Serial.println("pin in stack");
+      return(true);
+    }
+    if(end_flag)
+    {
+      Serial.println("pin not in stack");
+      return(false);
+    }
+  }
+}
+
 void setup()
 {
   Serial.begin(9600);
   pgcode = getStringFromAddress(PGCODE_ADDRESS).toInt();
   mid = getStringFromAddress(MID_ADDRESS);
   keypad_pin_input = "";
+
+  storeStringToAddress("123456*212451*999038/", PINSTACK_ADDRESS, '/');
 }
 
 void loop()
@@ -321,7 +376,7 @@ void loop()
     Serial.println(keypad_pin_input);
   }
   
-  if (Serial.available() > 0 || pin_entered)
+  if (pin_entered)
   { 
     pin_entered = false;
     String pin = keypad_pin_input;
