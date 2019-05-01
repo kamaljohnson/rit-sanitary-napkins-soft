@@ -1,6 +1,32 @@
 #include<EEPROM.h>
+#include<Keypad.h>
 
-int not_used_pgc_list[1000];
+//------PGCODE|MID--------
+#define PGCODE_ADDRESS 0
+#define MID_ADDRESS 50
+int pgcode;
+String mid;
+//------------------------
+
+//---------KEYPAD----------
+
+const byte ROWS = 4; 
+const byte COLS = 3; 
+
+char hexa_keys[ROWS][COLS] = {
+  {'1', '2', '3'},
+  {'4', '5', '6'},
+  {'7', '8', '9'},
+  {'*', '0', '#'}};
+
+byte row_pins[ROWS] = {9, 8, 7, 6}; 
+byte col_pins[COLS] = {5, 4, 3}; 
+
+Keypad custom_keypad = Keypad(makeKeymap(hexa_keys), row_pins, col_pins, ROWS, COLS);
+String keypad_pin_input;
+int current_key_index = 0;
+//----------------------------
+
 
 char hex[256];
 uint8_t data[256];
@@ -217,21 +243,91 @@ int checkPin(String mid, int pgcode, String pin, int limit)
   } 
 }
 
+void storeStringToAddress(String data_string, int address, char end_char = '*')
+{
+  Serial.println("");
+  Serial.print("<-");
+  int len = data_string.length();
+  int curr_char_address;
+  
+  for(int i = 0; i<len; i++)
+  {
+    curr_char_address = address + i;
+    EEPROM.write(curr_char_address, data_string.charAt(i));
+    Serial.print(data_string.charAt(i));
+  }
+  Serial.println("");
+  EEPROM.write(curr_char_address + 1, end_char);
+}
+
+String getStringFromAddress(int address, char end_char= '*')
+{
+  Serial.println("");
+  Serial.print("->");
+  String data;
+  char curr_char;
+  int curr_char_address;
+  int i = 0;
+  while(true) 
+  {
+    curr_char_address = address + i;
+    curr_char = EEPROM.read(curr_char_address);
+    if(curr_char != end_char)
+    {
+      data += (String)curr_char;
+      Serial.print(curr_char);
+    }
+    else
+    {
+      Serial.println("");
+      return(data);
+    }
+    i++;
+  }
+}
+
 void setup()
 {
   Serial.begin(9600);
-  String pin = "959832";
+  pgcode = getStringFromAddress(PGCODE_ADDRESS).toInt();
+  mid = getStringFromAddress(MID_ADDRESS);
+  keypad_pin_input = "";
 }
 
 void loop()
 {
-  if (Serial.available() > 0)
-  {
-    String pin = Serial.readString();
+  char key_pressed = custom_keypad.getKey();
+  bool pin_entered = false;
+  
+  if (key_pressed){
+    if(current_key_index < 6 && key_pressed!='#' && key_pressed != '*')
+    {
+      keypad_pin_input += String(key_pressed);
+      current_key_index++;
+    }
+    if(current_key_index == 6 && key_pressed == '#')
+    {
+      current_key_index = 0;
+      pin_entered = true;
+    }
+    if(key_pressed == '*')
+    {
+      if(current_key_index > 0)
+      {
+        current_key_index--;
+        keypad_pin_input.remove(current_key_index);
+      }
+    }
+    Serial.println(keypad_pin_input);
+  }
+  
+  if (Serial.available() > 0 || pin_entered)
+  { 
+    pin_entered = false;
+    String pin = keypad_pin_input;
+    keypad_pin_input = "";
     pin.remove(6);
     Serial.print("\n" + pin + " -> ");
-    String mid = "tempId";
-    int pgcode = 10;
     int limit = 10;
     
     int result = checkPin(mid, pgcode, pin, limit);
@@ -242,7 +338,9 @@ void loop()
     }
     else
     {
-      Serial.print("Pin Accepted at " + (String)result);
+      Serial.print("Pin Accepted");
+      pgcode += (result+1);
+      storeStringToAddress(String(pgcode), PGCODE_ADDRESS);
     }
   }
   
