@@ -292,9 +292,70 @@ String getStringFromAddress(int address, char end_char= '*')
   }
 }
 
-void errazeStringArrayFromAddress(int starting_address, char end_char = '/')
+void addPinToStack(String pin)
 {
+  char sub_end_char = '*';
+  char end_char = '/';
+  String string = getStringFromAddress(PINSTACK_ADDRESS, end_char);
+  string += sub_end_char;
+  string += pin;
+  string += end_char;
+  storeStringToAddress(string, PINSTACK_ADDRESS, end_char);
+}
+
+void removePinFromStack(String pin)
+{
+  String string_array[10];
+  char sub_end_char = '*';
+  char end_char = '/';
+  String string = getStringFromAddress(PINSTACK_ADDRESS, end_char);
+  string += end_char;
   
+  int j = 0;
+  int i = 0;
+  bool end_flag = false;
+  while(true)
+  {
+    String sub_string = "";
+    while(true)
+    {
+      char ch = string.charAt(j);
+      j++;
+      if(ch == sub_end_char)
+      {
+        break;
+      }
+      if(ch == end_char)
+      {
+        end_flag = true;
+        break;
+      }
+      sub_string += String(ch);
+    }
+    if(!pin.equals(sub_string))
+    {
+      string_array[i] = sub_string;
+      Serial.println(sub_string);
+      i++;
+    }
+    else
+    {
+      Serial.println(pin + " is removed from stack");
+    }
+    if(end_flag)
+    {
+      String temp_string = "";
+      for(int k = 0; k < i; k++)
+      {
+        temp_string += string_array[k];
+        temp_string += "*";
+      }
+      temp_string.remove(temp_string.length()-1);
+      temp_string += "/";
+      storeStringToAddress(temp_string, PINSTACK_ADDRESS, end_char);
+      return;
+    }
+  }
 }
 
 bool checkIfPinPresentInStack(String pin)
@@ -328,6 +389,7 @@ bool checkIfPinPresentInStack(String pin)
     Serial.println(sub_string);
     if(pin.equals(sub_string))
     {
+      removePinFromStack(pin);
       Serial.println("pin in stack");
       return(true);
     }
@@ -343,6 +405,7 @@ void setup()
 {
   Serial.begin(9600);
   pgcode = getStringFromAddress(PGCODE_ADDRESS).toInt();
+  pgcode = 0;
   mid = getStringFromAddress(MID_ADDRESS);
   keypad_pin_input = "";
 
