@@ -1,3 +1,7 @@
+#include<EEPROM.h>
+
+int not_used_pgc_list[1000];
+
 char hex[256];
 uint8_t data[256];
 int start = 0;
@@ -176,17 +180,12 @@ String SHA256(String data)
   return(btoh(hex, hash, 32));
 }
 
-
-void setup()
+//-1 => rejected else offset from pgcode
+int checkPin(String mid, int pgcode, String pin, int limit)
 {
-  Serial.begin(9600);
-
-  String pin = "797695";
-  String mid = "tempId";
-  int pgcode = 1;
-  int limit = 10;
   String sha;
-  bool success = false; 
+  bool success = false;
+  int pgc_skipped = 0;
   for(int i = pgcode; i<pgcode +limit; i++)
   {
     sha = SHA256(String(i) + mid);
@@ -203,19 +202,48 @@ void setup()
       success = true;
       break;
     }
+    pgc_skipped++;
   }
+  
+  
   if(success == false)
   {
-    Serial.println("Pin Rejected");
+    pgc_skipped = 0;   
+    return(-1);
   }
   else 
   {
-    Serial.println("Pin Accepted");
-  }
-  
+    return(pgc_skipped);
+  } 
+}
+
+void setup()
+{
+  Serial.begin(9600);
+  String pin = "959832";
 }
 
 void loop()
 {
-
+  if (Serial.available() > 0)
+  {
+    String pin = Serial.readString();
+    pin.remove(6);
+    Serial.print("\n" + pin + " -> ");
+    String mid = "tempId";
+    int pgcode = 10;
+    int limit = 10;
+    
+    int result = checkPin(mid, pgcode, pin, limit);
+    
+    if(result == -1)
+    {
+      Serial.println("Pin Rejected");
+    }
+    else
+    {
+      Serial.print("Pin Accepted at " + (String)result);
+    }
+  }
+  
 }

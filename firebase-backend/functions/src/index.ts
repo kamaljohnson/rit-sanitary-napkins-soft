@@ -58,6 +58,17 @@ export const onUserPinUpdate = functions.database
 
         const mid = await admin.database().ref('users/' + uid).child('mid').once('value')
 
+        if(mid.val() == "") {
+            return admin.database().ref('users/' + uid).ref.update({pin:'-3'})
+        }
+        const machineRef = admin.database().ref('machines/' + mid.val());
+        
+        const mid_snap =  await machineRef.once('value')
+        
+        if(!mid_snap.exists()) {
+            return admin.database().ref('users/' + uid).ref.update({pin:'-3'})
+        }
+        
         const pin = await getPin(mid.val())
 
         await admin.database().ref('users/' + uid).ref.update({wallet:wallet_balance.val() - current_item_cost.val()})
