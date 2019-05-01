@@ -212,6 +212,7 @@ String SHA256(String data)
 int checkPin(String mid, int pgcode, String pin, int limit)
 {
   String sha;
+  String pins_skipped[10];
   bool success = false;
   int pgc_skipped = 0;
   for(int i = pgcode; i<pgcode +limit; i++)
@@ -230,6 +231,7 @@ int checkPin(String mid, int pgcode, String pin, int limit)
       success = true;
       break;
     }
+    pins_skipped[pgc_skipped] = i_pin;
     pgc_skipped++;
   }
   
@@ -245,6 +247,10 @@ int checkPin(String mid, int pgcode, String pin, int limit)
   }
   else 
   {
+    for(int i = 0; i<pgc_skipped; i++)
+    {
+      addPinToStack(pins_skipped[i]);
+    }
     return(pgc_skipped);
   } 
 }
@@ -404,8 +410,8 @@ bool checkIfPinPresentInStack(String pin)
 void setup()
 {
   Serial.begin(9600);
+  storeStringToAddress("0", PGCODE_ADDRESS);
   pgcode = getStringFromAddress(PGCODE_ADDRESS).toInt();
-  pgcode = 0;
   mid = getStringFromAddress(MID_ADDRESS);
   keypad_pin_input = "";
 
@@ -457,8 +463,11 @@ void loop()
     else
     {
       Serial.print("Pin Accepted");
-      pgcode += (result+1);
-      storeStringToAddress(String(pgcode), PGCODE_ADDRESS);
+      if(result < limit)
+      {
+        pgcode += (result+1);
+        storeStringToAddress(String(pgcode), PGCODE_ADDRESS);
+      }
     }
   }
   
