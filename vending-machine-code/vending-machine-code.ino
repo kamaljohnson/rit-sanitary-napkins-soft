@@ -1,5 +1,7 @@
 #include<EEPROM.h>
 #include<Keypad.h>
+#include<LiquidCrystal_I2C.h>
+#include<Wire.h>
 
 //------PGCODE|MID--------
 #define PGCODE_ADDRESS 0
@@ -28,6 +30,12 @@ Keypad custom_keypad = Keypad(makeKeymap(hexa_keys), row_pins, col_pins, ROWS, C
 String keypad_pin_input;
 int current_key_index = 0;
 //----------------------------
+
+//----------LCD--------------
+
+LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
+
+//-----------------------------
 
 
 char hex[256];
@@ -407,6 +415,14 @@ bool checkIfPinPresentInStack(String pin)
   }
 }
 
+void displayLCD(String msg)
+{
+  lcd.begin(16, 2);
+  lcd.backlight();
+  lcd.setCursor(0,0);
+  lcd.print(msg);
+}
+
 void setup()
 {
   Serial.begin(9600);
@@ -422,8 +438,7 @@ void loop()
 {
   char key_pressed = custom_keypad.getKey();
   bool pin_entered = false;
-  
-  if (key_pressed){
+  if (Serial.available() > 0){
     if(current_key_index < 6 && key_pressed!='#' && key_pressed != '*')
     {
       keypad_pin_input += String(key_pressed);

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="text_color">#FFFFFF</color>
-    <color name="text_color_negative">#673AB7</color>
-    <color name="main_background">#2E1E3F</color>
-    <color name="sub_background">#433555</color>
-    <color name="main_button_color">#453556</color>
-    <color name="success_button_color">#4CAF50</color>
+    <color name="text_color">#222222</color>
+    <color name="text_color_negative">#DFDFDF</color>
+    <color name="main_background">#03A9F4</color>
+    <color name="sub_background">#7AD5FF</color>
+    <color name="main_button_color">#2196F3</color>
+    <color name="success_button_color">#91FC93</color>
 </resources>
 
 

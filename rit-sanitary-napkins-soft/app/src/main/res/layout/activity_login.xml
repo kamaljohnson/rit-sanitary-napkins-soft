@@ -18,7 +18,7 @@
             app:layout_constraintEnd_toEndOf="@+id/amount_text"
             android:background="@drawable/rounded_edittext_register"
             android:hint="Email"
-            android:textColor="@color/text_color_negative"
+            android:textColor="@color/text_color"
             android:textColorHint="@color/main_background"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/amount_text"/>
@@ -35,7 +35,7 @@
             app:layout_constraintEnd_toEndOf="@+id/signin_email_edit_text"
             app:layout_constraintStart_toStartOf="@+id/signin_email_edit_text"
             android:background="@drawable/rounded_edittext_register"
-            android:textColor="@color/text_color_negative"
+            android:textColor="@color/text_color"
             android:hint="@string/password"
     />
     <EditText
@@ -52,7 +52,7 @@
             android:layout_marginStart="32dp"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginLeft="32dp"
             android:background="@drawable/rounded_edittext_register"
-            android:textColor="@color/text_color_negative"
+            android:textColor="@color/text_color"
             android:hint="Username"
     />
     <Button
@@ -69,7 +69,7 @@
     />
     <TextView
             android:textAlignment="center"
-            android:textColor="@color/text_color"
+            android:textColor="@color/text_color_negative"
             android:text="Already have an account?"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

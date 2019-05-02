@@ -16,7 +16,7 @@
             android:id="@+id/signin_email_edit_text"
             android:background="@drawable/rounded_edittext_register"
             android:hint="Email"
-            android:textColor="@color/cardview_shadow_start_color"
+            android:textColor="@color/text_color"
             android:layout_marginEnd="32dp"
             android:textColorHint="@color/main_background"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginRight="32dp"
@@ -37,7 +37,7 @@
             app:layout_constraintEnd_toEndOf="@+id/signin_email_edit_text"
             app:layout_constraintStart_toStartOf="@+id/signin_email_edit_text"
             android:background="@drawable/rounded_edittext_register"
-            android:textColor="@color/cardview_shadow_start_color"
+            android:textColor="@color/text_color"
             android:hint="@string/password"
     />
     <Button

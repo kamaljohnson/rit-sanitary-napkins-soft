@@ -26,10 +26,6 @@ class WalletTopUpActivity : AppCompatActivity() {
 
         online_payment_button.setOnClickListener() {
             Toast.makeText(this, "this feature is not yet implemented", Toast.LENGTH_SHORT).show()
-
-            val uid = FirebaseAuth.getInstance().uid
-            val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
-            ref.child("wallet").setValue(10)
         }
     }
 }
