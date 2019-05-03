@@ -11,6 +11,8 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/Theme.AppCompat">
+        <activity android:name=".UPIPaymentActivity">
+        </activity>
         <activity android:name=".FeedbackActivity">
         </activity>
         <activity

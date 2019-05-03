@@ -121,8 +121,8 @@ class SendMoneyFromWallet : AppCompatActivity() {
     class Transactions (
         val from:String ?= "",
         val to:String ?= "",
-        val amount:Float ?= 0f,
-        val status:String ?= ""
+        var amount:Float ?= 0f,
+        var status:String ?= ""
     )
 
     override fun onDestroy() {

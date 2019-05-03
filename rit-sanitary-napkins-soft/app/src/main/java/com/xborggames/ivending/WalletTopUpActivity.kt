@@ -25,7 +25,8 @@ class WalletTopUpActivity : AppCompatActivity() {
         }
 
         online_payment_button.setOnClickListener() {
-            Toast.makeText(this, "this feature is not yet implemented", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, UPIPaymentActivity::class.java)
+            startActivity(intent)
         }
     }
 }

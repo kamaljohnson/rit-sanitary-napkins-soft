@@ -24,8 +24,8 @@
     <TextView
             android:textAlignment="center"
             android:textColor="@color/text_color"
-            android:layout_width="157dp"
-            android:layout_height="78dp"
+            android:layout_width="224dp"
+            android:layout_height="73dp"
             android:id="@+id/wallet_balance_text"
             app:layout_constraintStart_toEndOf="@+id/textView5"
             android:layout_marginLeft="16dp" android:layout_marginStart="16dp" app:layout_constraintEnd_toEndOf="parent"

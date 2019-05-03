@@ -63,7 +63,7 @@ export const onUserPinUpdate = functions.database
         }
         const machineRef = admin.database().ref('machines/' + mid.val());
         
-        const mid_snap =  await machineRef.once('value')
+        const mid_snap =  await machineRef.once('value')    
         
         if(!mid_snap.exists()) {
             return admin.database().ref('users/' + uid).ref.update({pin:'-3'})
@@ -89,6 +89,10 @@ export const onTransactionCreate = functions.database
     const transaction_id = context.params.pushId
     const to = snapshot.child('to')
     const from = snapshot.child('from')
+
+    if(snapshot.child('from').val() == 'valid') {
+        return
+    }
 
     //checking if the to uid is a valid user id
     const to_user_ref = admin.database().ref('users/' + to.val());

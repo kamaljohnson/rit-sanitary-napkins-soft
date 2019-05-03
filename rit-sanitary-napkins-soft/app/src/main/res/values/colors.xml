@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="text_color">#222222</color>
+    <color name="text_color">#3C3C3C</color>
     <color name="text_color_negative">#DFDFDF</color>
     <color name="main_background">#03A9F4</color>
     <color name="sub_background">#7AD5FF</color>
