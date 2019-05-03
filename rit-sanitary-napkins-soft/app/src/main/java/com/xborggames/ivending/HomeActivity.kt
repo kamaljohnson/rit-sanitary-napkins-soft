@@ -34,6 +34,11 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        feedback_button.setOnClickListener {
+            val intent = Intent(this, FeedbackActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     public override fun onStart() {

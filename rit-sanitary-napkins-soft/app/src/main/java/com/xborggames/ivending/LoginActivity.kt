@@ -92,3 +92,10 @@ class Bank(
     val upi:String ?= "",
     val balance:Float ?= 0f
 )
+
+class Feedback (
+    val uid:String ?= "",
+    val data:String ?= "",
+    val catagory:String ?= "",
+    val message:String ?= ""
+)
