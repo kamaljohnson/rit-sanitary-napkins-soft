@@ -20,6 +20,14 @@ import kotlinx.android.synthetic.main.activity_upipayment.done_button
 import kotlinx.android.synthetic.main.activity_upipayment.send_button
 import kotlinx.android.synthetic.main.activity_upipayment.transaction_status
 import kotlinx.android.synthetic.main.activity_upipayment.wallet_balance_text
+import android.R.attr.data
+import android.content.Context
+import android.net.NetworkInfo
+import android.content.Context.CONNECTIVITY_SERVICE
+import android.support.v4.content.ContextCompat.getSystemService
+import android.net.ConnectivityManager
+import android.util.Log
+
 
 class UPIPaymentActivity : AppCompatActivity() {
 
@@ -59,7 +67,13 @@ class UPIPaymentActivity : AppCompatActivity() {
         }
 
         send_button.setOnClickListener {
+            send_button.visibility = View.INVISIBLE
             payUsingUpi(amount_text.text.toString(), bank_upi_id, "kamal", "napkin payment")
+        }
+        done_button.setOnClickListener {
+            val intent = Intent(this, HomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
         }
     }
 
@@ -79,19 +93,20 @@ class UPIPaymentActivity : AppCompatActivity() {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
-                val bank = dataSnapshot.getValue(Bank::class.java)
-                if (bank != null) {
-                    bank_upi_id = bank.upi.toString()
-                    bank_upi_text.text = "to: " + bank_upi_id;
-                    transaction_status.text = "valid"
-                    transaction_id = transaction_ref.push().key.toString()
-                    val uid = FirebaseAuth.getInstance().uid ?: ""
-                    transaction = SendMoneyFromWallet.Transactions(
-                        from = uid,
-                        to = bank.upi,
-                        status = "valid"
-                    )
-                    transaction_ref.child(transaction_id).setValue(transaction)
+                if(bank_upi_id==""){
+                    val bank = dataSnapshot.getValue(Bank::class.java)
+                    if (bank != null) {
+                        bank_upi_id = bank.upi.toString()
+                        bank_upi_text.text = "to: " + bank_upi_id;
+                        transaction_status.text = "valid"
+                        transaction_id = transaction_ref.push().key.toString()
+                        val uid = FirebaseAuth.getInstance().uid ?: ""
+                        transaction = SendMoneyFromWallet.Transactions(
+                            from = uid,
+                            to = bank.upi
+                        )
+                        transaction_ref.child(transaction_id).setValue(transaction)
+                    }
                 }
             }
         }
@@ -156,17 +171,90 @@ class UPIPaymentActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (Activity.RESULT_OK == resultCode || resultCode === 11) {
+            if (data != null) {
+                val trxt = data.getStringExtra("response")
+                Log.d("UPI", "onActivityResult: $trxt")
+                val dataList = ArrayList<String>()
+                dataList.add(trxt)
+                upiPaymentDataOperation(dataList)
+            } else {
+                Log.d("UPI", "onActivityResult: " + "Return data is null")
+                val dataList = ArrayList<String>()
+                dataList.add("nothing")
+                upiPaymentDataOperation(dataList)
+            }
+        } else {
+            Log.d("UPI", "onActivityResult: " + "Return data is null") //when user simply back without payment
+            val dataList = ArrayList<String>()
+            dataList.add("nothing")
+            upiPaymentDataOperation(dataList)
+        }
+    }
 
-        if(requestCode == UPI_PAYMENT) {
-            if(Activity.RESULT_OK == resultCode || resultCode == 11) {
-                if(data != null) {
-                    val text = data.getStringExtra("response")
-                    transaction.status = "pending"
-                    transaction.amount = amount_text.text.toString().toFloat()
-                    transaction_ref.child(transaction_id).setValue(transaction)
+    private fun upiPaymentDataOperation(data: ArrayList<String>) {
+        if (isConnectionAvailable(this@UPIPaymentActivity)) {
+            var str = data[0]
+            Log.d("UPIPAY", "upiPaymentDataOperation: $str")
+            var paymentCancel = ""
+            if (str == null) str = "discard"
+            var status = ""
+            var approvalRefNo = ""
+            val response = str.split("&".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            for (i in response.indices) {
+                val equalStr = response[i].split("=".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                if (equalStr.size >= 2) {
+                    if (equalStr[0].toLowerCase() == "Status".toLowerCase()) {
+                        status = equalStr[1].toLowerCase()
+                    } else if (equalStr[0].toLowerCase() == "ApprovalRefNo".toLowerCase() || equalStr[0].toLowerCase() == "txnRef".toLowerCase()) {
+                        approvalRefNo = equalStr[1]
+                    }
+                } else {
+                    paymentCancel = "Payment cancelled by user."
                 }
             }
+
+            if (status == "success") {
+                //Code to handle successful transaction here.
+                transaction.status = "success"
+                transaction.amount = amount_text.text.toString().toFloat()
+                transaction_ref.child(transaction_id).setValue(transaction)
+                Toast.makeText(this@UPIPaymentActivity, "Transaction successful.", Toast.LENGTH_SHORT).show()
+                Log.d("UPI", "responseStr: $approvalRefNo")
+                done_button.visibility = View.VISIBLE
+            } else if ("Payment cancelled by user." == paymentCancel) {
+                transaction.status = "cancelled"
+                transaction.amount = amount_text.text.toString().toFloat()
+                transaction_ref.child(transaction_id).setValue(transaction)
+                Toast.makeText(this@UPIPaymentActivity, "Payment cancelled by user.", Toast.LENGTH_SHORT).show()
+                done_button.visibility = View.VISIBLE
+            } else {
+                transaction.status = "failed"
+                transaction.amount = amount_text.text.toString().toFloat()
+                transaction_ref.child(transaction_id).setValue(transaction)
+                done_button.visibility = View.VISIBLE
+            }
+        } else {
+            Toast.makeText(
+                this@UPIPaymentActivity,
+                "Internet connection is not available. Please check and try again",
+                Toast.LENGTH_SHORT
+            ).show()
         }
+    }
+
+    fun isConnectionAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager != null) {
+            val netInfo = connectivityManager.activeNetworkInfo
+            if (netInfo != null && netInfo.isConnected
+                && netInfo.isConnectedOrConnecting
+                && netInfo.isAvailable
+            ) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {

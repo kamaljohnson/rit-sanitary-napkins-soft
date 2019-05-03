@@ -58,7 +58,7 @@ export const onUserPinUpdate = functions.database
 
         const mid = await admin.database().ref('users/' + uid).child('mid').once('value')
 
-        if(mid.val() == "") {
+        if(mid.val() === "") {
             return admin.database().ref('users/' + uid).ref.update({pin:'-3'})
         }
         const machineRef = admin.database().ref('machines/' + mid.val());
@@ -90,8 +90,10 @@ export const onTransactionCreate = functions.database
     const to = snapshot.child('to')
     const from = snapshot.child('from')
 
-    if(snapshot.child('from').val() == 'valid') {
-        return
+    const company_upi = await admin.database().ref('banks/company').child('upi').once('value')
+
+    if(to.val() === company_upi.val()) {
+        return admin.database().ref('transactions/' + transaction_id).ref.update({status:"valid"})
     }
 
     //checking if the to uid is a valid user id
@@ -130,6 +132,25 @@ export const onTransactionUpdate = functions.database
 
     const to_user_ref = admin.database().ref('users/' + to);
     const from_user_ref  = admin.database().ref('users/' + from);
+
+    const company_ref = await admin.database().ref('banks/company').once('value')
+
+    if(to === company_ref.child('upi').val()) {
+        //TODO: check using google pay api for payment validation
+        const status = change.after.child('status').val()
+        switch(status) {
+            case "success":
+                const from_user_wallet_balance = await admin.database().ref('users/' + from).child('wallet').once('value')  
+                await from_user_ref.update({wallet:from_user_wallet_balance.val() + amount})
+                await admin.database().ref('transactions/' + context.params.pushId).ref.update({status:"Successful"})
+                return admin.database().ref('banks/company').ref.update({balance:company_ref.child('balance').val() + amount})
+            case "cancelled":
+                return admin.database().ref('transactions/' + context.params.pushId).ref.update({status:"Cancelled"})
+            case "failed":
+                return admin.database().ref('transactions/' + context.params.pushId).ref.update({status:"Failed"})
+        }
+        
+    }
 
     try{
         const promises = []
