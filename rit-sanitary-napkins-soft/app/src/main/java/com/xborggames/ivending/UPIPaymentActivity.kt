@@ -82,6 +82,7 @@ class UPIPaymentActivity : AppCompatActivity() {
 
         done_button.visibility = View.INVISIBLE
         send_button.visibility = View.INVISIBLE
+        amount_text.isEnabled = false;
         transaction_status.text = "invalid"
 
         database = FirebaseDatabase.getInstance().reference
@@ -99,6 +100,7 @@ class UPIPaymentActivity : AppCompatActivity() {
                         bank_upi_id = bank.upi.toString()
                         bank_upi_text.text = "to: " + bank_upi_id;
                         transaction_status.text = "valid"
+                        amount_text.isEnabled = true;
                         transaction_id = transaction_ref.push().key.toString()
                         val uid = FirebaseAuth.getInstance().uid ?: ""
                         transaction = SendMoneyFromWallet.Transactions(
@@ -162,16 +164,17 @@ class UPIPaymentActivity : AppCompatActivity() {
         upiPayIntent.setData(uri)
         val chooser:Intent = Intent.createChooser(upiPayIntent, "Pay with")
 
-        if(null != chooser.resolveActivity(packageManager)){
+        if(chooser.resolveActivity(packageManager) != null){
             startActivityForResult(chooser, UPI_PAYMENT)
         } else {
             Toast.makeText(this, "No UPI app found, please install one to continue", Toast.LENGTH_LONG).show()
         }
     }
-
+//D/UPI: onActivityResult: txnId=AXI23ae9611d45f4c9ca6d0fdcfdb61ee6f&responseCode=00&Status=SUCCESS&txnRef=912414555047
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (Activity.RESULT_OK == resultCode || resultCode === 11) {
+    Log.d("UPI", resultCode.toString()) //when user simply back without payment
+    if (Activity.RESULT_OK == resultCode || resultCode === 11) {
             if (data != null) {
                 val trxt = data.getStringExtra("response")
                 Log.d("UPI", "onActivityResult: $trxt")

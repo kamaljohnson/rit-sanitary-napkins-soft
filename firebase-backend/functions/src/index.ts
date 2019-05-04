@@ -4,11 +4,6 @@ import { sha256 } from 'js-sha256';
 
 admin.initializeApp()
 
-const SENDGRID_API_KEY = functions.config().sendgrid.key
-
-const sgMail = require('@sendgrid/mail')
-sgMail.setApiKey(SENDGRID_API_KEY)
-
 export const onUserMidUpdate = functions.database
 .ref('/users/{uid}/mid')
 .onUpdate((change, context) => {
