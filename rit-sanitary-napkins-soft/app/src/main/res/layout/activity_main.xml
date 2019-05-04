@@ -5,18 +5,12 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".QRCodeScanner" android:background="@color/main_background">
-
-    <Button
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:id="@+id/start_button" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginLeft="60dp" android:layout_marginStart="60dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" android:layout_marginRight="60dp"
-            android:layout_marginEnd="60dp"
-            android:textColor="@color/text_color"
-            android:background="@drawable/rounded_button"
-            android:text="this button will be replaced by loading screen"/>
+        tools:context=".QRCodeScanner" android:background="#FDFDFE">
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" app:srcCompat="@drawable/vendx"
+            android:id="@+id/imageView"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="visible"/>
 </android.support.constraint.ConstraintLayout>

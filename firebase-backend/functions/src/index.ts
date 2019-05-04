@@ -4,6 +4,11 @@ import { sha256 } from 'js-sha256';
 
 admin.initializeApp()
 
+const SENDGRID_API_KEY = functions.config().sendgrid.key
+
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(SENDGRID_API_KEY)
+
 export const onUserMidUpdate = functions.database
 .ref('/users/{uid}/mid')
 .onUpdate((change, context) => {
@@ -126,7 +131,7 @@ export const onTransactionUpdate = functions.database
     const to = change.after.child('to').val()
     const from = change.after.child('from').val()
 
-    if(change.after.child('amount').val() == change.before.child('amount').val() || change.after.child('amount').val() == 0) {
+    if(change.after.child('amount').val() === change.before.child('amount').val() || change.after.child('amount').val() === 0) {
         return null
     }
 
@@ -176,6 +181,33 @@ export const onTransactionUpdate = functions.database
     }
 
 })
+
+
+// Un comment this when upgrading to a heigher firebase plane
+
+// export const onFeedbackCreate = functions.database
+// .ref('/feedbacks/{pushId}')
+// .onCreate(async (snapshot, context) => {
+    
+//     const message = snapshot.child('message').val()
+//     const time_stamp = snapshot.child('time stamp').val()
+//     const uid = snapshot.child('uid').val()
+    
+//     const email_msg = {
+//         to: "xborggames@gmail.com",
+//         from: "kamaljohnson12345@gmail.com",
+//         subject: "Feedback",
+
+//         templateId:'d-3098ae8783ef4b6eb7fa4146a030a777',
+//         substitutionWrappers:['{{', '}}'],
+//         substitution: {
+//             time_stamp: time_stamp,
+//             uid: uid,
+//             message: message
+//         }
+//     }
+//     return sgMail.send(email_msg)
+// })
 
 
 async function getPin(mid : string) {
