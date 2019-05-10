@@ -174,7 +174,7 @@ class UPIPaymentActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
     Log.d("UPI", resultCode.toString()) //when user simply back without payment
-    if (Activity.RESULT_OK == resultCode || resultCode === 11) {
+    if (Activity.RESULT_OK == resultCode || resultCode === 11 || requestCode == 777) {
             if (data != null) {
                 val trxt = data.getStringExtra("response")
                 Log.d("UPI", "onActivityResult: $trxt")
